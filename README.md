@@ -82,9 +82,7 @@ what you need rather than editing the files.
 
 ### Step 1: Stage 1 pretraining
 
-Written for SLURM, 15 nodes x 8 GPUs; adjust `--nodes`/`--gres` and
-`GPUS_PER_NODE` together. The released Stage 1 checkpoint continues from an
-earlier run, so `--max-epoch` may need raising to match it.
+To pretrain the model on the Stage 1 dataset, use `train_stage1.sh`.
 
 ```bash
 sbatch train_stage1.sh
