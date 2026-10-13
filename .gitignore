@@ -1,0 +1,20 @@
+# Ignore compiled python and cache
+__pycache__/
+*.pyc
+
+# Ignore compiled C++ binaries (Shared Objects)
+*.so
+build/
+
+# Ignore logs and temporary outputs
+*.txt
+*_logs/
+*.png
+
+# Exception: If you WANT to save your notes, uncomment the next line:
+# !user_notes.txt
+convert_checkpoint.py
+gpu_profile_1_node.sh
+hybrid_shard.sh
+nsys_profile_instructpro2.sh
+wandb/
