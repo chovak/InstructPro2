@@ -9,6 +9,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from fairseq import metrics
+from fairseq.criterions import FairseqCriterion, register_criterion
+from fairseq.dataclass import FairseqDataclass
+
 
 @dataclass
 class InstructPro2Config(FairseqDataclass):

@@ -33,6 +33,10 @@ import numpy as np
 import torch
 from transformers import AutoTokenizer
 
+from fairseq.dataclass.constants import DATASET_IMPL_CHOICES
+from fairseq.file_io import PathManager
+from . import FairseqDataset
+
 
 LIGAND_ENCODER = "seyonec/SMILES_tokenized_PubChem_shard00_160k"
 ANTIGEN_ENCODER = "facebook/esm2_t12_35M_UR50D"

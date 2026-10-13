@@ -27,6 +27,11 @@ from transformers.modeling_utils import PreTrainedModel
 from transformers.utils import logging
 from transformers.utils.model_parallel_utils import assert_device_map, get_device_map
 
+from fairseq.models import register_model, register_model_architecture
+from fairseq.models.transformer import (
+    base_architecture as transformer_base_architecture,
+)
+
 
 logger = logging.get_logger(__name__)
 
