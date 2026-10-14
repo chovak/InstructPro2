@@ -7,7 +7,6 @@
 from .fairseq_dataset import FairseqDataset, FairseqIterableDataset
 
 from .fasta_dataset import FastaDataset, EncodedFastaDataset
-from .language_guided_protein_dataset import LanguageGuidedProteinDataset
 from .dictionary import Dictionary
 from .instructpro2_dataset import InstructPro2Dataset
 
@@ -20,6 +19,5 @@ __all__ = [
     "FairseqDataset",
     "FairseqIterableDataset",
     "Dictionary",
-    "LanguageGuidedProteinDataset",
     "InstructPro2Dataset"
 ]
