@@ -31,7 +31,7 @@ ProGen2-large-BFD90 generates the sequence.
 ## ⚒️ Installation
 
 ```bash
-git clone [https://github.com/chovak/InstructPro2.git](https://github.com/chovak/InstructPro2.git)
+git clone https://github.com/chovak/InstructPro2.git
 cd InstructPro2
 
 conda env create -f protein.yml    # creates the `InstructPro2` environment
