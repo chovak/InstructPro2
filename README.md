@@ -1,11 +1,11 @@
 <div align="center">
 
-# 🧬 InstructPro2
+# InstructPro2
 
 ### Natural Language and Biological Grounding<br/>Guided De Novo Protein Design
 
 <p>
-<a href="https://arxiv.org/abs/TODO"><img src="https://img.shields.io/badge/-arXiv-B31B1B?style=flat-square" alt="arXiv"/></a>
+<a href="https://arxiv.org/abs/2610.19592"><img src="https://img.shields.io/badge/-arXiv-B31B1B?style=flat-square" alt="arXiv"/></a>
 <a href="https://huggingface.co/charlesnovak/InstructPro2"><img src="https://img.shields.io/badge/-Model-FFD21E?style=flat-square" alt="Model"/></a>
 <a href="https://huggingface.co/datasets/charlesnovak/InstructPro2Bench"><img src="https://img.shields.io/badge/-Dataset-FFD21E?style=flat-square" alt="Dataset"/></a>
 <img src="https://img.shields.io/badge/-Python%203.9-3776AB?style=flat-square" alt="python"/>
@@ -152,7 +152,7 @@ If you find InstructPro2 useful in your research, please cite our work:
 @article{instructpro2,
   title   = {InstructPro2: Natural Language and Biological Grounding Guided De Novo Protein Design},
   author  = {Charles Novak and Zhenqiao Song and Chuan Li and Jianwen Xie and Lei Li},
-  journal = {arXiv preprint arXiv:TODO},
+  journal = {arXiv preprint arXiv:2610.19592},
   year    = {2026}
 }
 ```
