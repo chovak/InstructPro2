@@ -264,11 +264,8 @@ def load_checkpoint(cfg: CheckpointConfig, trainer, **passthrough_args):
     if extra_state is not None and not reset_dataloader:
         # restore iterator from checkpoint
         itr_state = extra_state["train_iterator"]
-        # epoch_itr = trainer.get_train_iterator(
-        #     epoch=itr_state["epoch"], load_dataset=True, **passthrough_args
-        # )
         epoch_itr = trainer.get_train_iterator(
-            epoch=10, load_dataset=True, **passthrough_args
+            epoch=itr_state.get("epoch", 10), load_dataset=True, **passthrough_args
         )
         epoch_itr.load_state_dict(itr_state)
     else:
@@ -485,9 +482,6 @@ def load_model_ensemble_and_task(
                     contents.__setattr__("_metadata", new_metadata)
                 '''====End of work-around logic====='''
 
-                # model.load_state_dict(
-                #     contents, strict=strict, model_cfg=cfg.model
-                # )
                 model.load_state_dict(
                     contents, strict=strict
                 )
@@ -564,11 +558,18 @@ def _upgrade_state_dict(state):
     # add optimizer_history
     if "optimizer_history" not in state:
         state["optimizer_history"] = [
-            {"criterion_name": "CrossEntropyCriterion", "best_loss": state["best_loss"]}
+            {
+                "criterion_name": "CrossEntropyCriterion",
+                "best_loss": state.get("best_loss"),
+            }
         ]
-        state["last_optimizer_state"] = state["optimizer"]
-        del state["optimizer"]
-        del state["best_loss"]
+
+        # Model-only checkpoints may not contain optimizer state.
+        if "optimizer" in state:
+            state["last_optimizer_state"] = state.pop("optimizer")
+
+        state.pop("best_loss", None)
+
     # move extra_state into sub-dictionary
     if "epoch" in state and "extra_state" not in state:
         state["extra_state"] = {
@@ -607,7 +608,7 @@ def _upgrade_state_dict(state):
     # use stateful training data iterator
     if "train_iterator" not in state["extra_state"]:
         state["extra_state"]["train_iterator"] = {
-            "epoch": state["extra_state"]["epoch"],
+            "epoch": state["extra_state"].get("epoch", 10),
             "iterations_in_epoch": state["extra_state"].get("batch_offset", 0),
         }
 
@@ -624,7 +625,7 @@ def _upgrade_state_dict(state):
         # epochs start at 1
         if state["extra_state"]["train_iterator"] is not None:
             state["extra_state"]["train_iterator"]["epoch"] = max(
-                state["extra_state"]["train_iterator"].get("epoch", 1), 1
+                state["extra_state"]["train_iterator"].get("epoch", 10), 1
             )
         # --remove-bpe ==> --postprocess
         if hasattr(state["args"], "remove_bpe"):
