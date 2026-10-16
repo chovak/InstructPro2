@@ -24,7 +24,7 @@ EXPECTED = {
 MODALITY = {"ligand": "ligand", "antibody": "antigen"}
 
 # Placeholder keys that should have been stripped from the Stage 2 splits.
-VESTIGIAL = ["dna", "antibody", "ligand"]
+VESTIGIAL = ["antibody", "ligand"]
 
 
 def main():

@@ -20,15 +20,29 @@
 # Configure by exporting any of the variables below, or edit the defaults.
 set -euo pipefail
 
-INSTRUCTPRO2_ROOT="${INSTRUCTPRO2_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-WORK_ROOT="${WORK_ROOT:-${HOME}/instructpro2}"
+ip2_locate_root() {
+    local candidate
+    for candidate in "${INSTRUCTPRO2_ROOT:-}" "${SLURM_SUBMIT_DIR:-}" \
+                     "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" "$(pwd)"
+    do
+        if [ -n "${candidate}" ] && [ -f "${candidate}/scripts/common.sh" ]; then
+            echo "${candidate}"; return 0
+        fi
+    done
+    return 1
+}
+INSTRUCTPRO2_ROOT="$(ip2_locate_root)" || {
+    echo "ERROR: could not locate the InstructPro2 repository." >&2
+    echo "       Submit from the repo root, or export INSTRUCTPRO2_ROOT." >&2
+    exit 1
+}
+export INSTRUCTPRO2_ROOT
+# shellcheck source=scripts/common.sh
+source "${INSTRUCTPRO2_ROOT}/scripts/common.sh"
 
-DATA_PATH="${DATA_PATH:-${WORK_ROOT}/data/stage1}"
-LOCAL_ROOT="${LOCAL_ROOT:-${WORK_ROOT}/model}"
-PRETRAIN_MODEL_PATH="${PRETRAIN_MODEL_PATH:-${LOCAL_ROOT}/progen2}"
-OUTPUT_PATH="${OUTPUT_PATH:-${LOCAL_ROOT}/instructpro2_stage1}"
+DATA_PATH="${DATA_PATH:-${DATA_ROOT}/stage1}"
+OUTPUT_PATH="${OUTPUT_PATH:-${MODEL_ROOT}/instructpro2_stage1}"
 
-CONDA_SH="${CONDA_SH:-${HOME}/miniconda3/etc/profile.d/conda.sh}"
 TRAIN_ENV="${TRAIN_ENV:-InstructPro2}"
 
 GPUS_PER_NODE="${GPUS_PER_NODE:-8}"
@@ -49,8 +63,7 @@ fi
 # e.g. RESET_FLAGS="--reset-optimizer --reset-lr-scheduler --reset-dataloader".
 RESET_FLAGS="${RESET_FLAGS:-}"
 
-# shellcheck disable=SC1090
-[ -f "${CONDA_SH}" ] && source "${CONDA_SH}" && conda activate "${TRAIN_ENV}"
+ip2_activate "${TRAIN_ENV}"
 
 mkdir -p "${OUTPUT_PATH}" training_logs
 

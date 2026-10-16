@@ -9,19 +9,33 @@
 # Configure by exporting any of the variables below, or edit the defaults.
 set -euo pipefail
 
-INSTRUCTPRO2_ROOT="${INSTRUCTPRO2_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-WORK_ROOT="${WORK_ROOT:-${HOME}/instructpro2}"
+ip2_locate_root() {
+    local candidate
+    for candidate in "${INSTRUCTPRO2_ROOT:-}" "${SLURM_SUBMIT_DIR:-}" \
+                     "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" "$(pwd)"
+    do
+        if [ -n "${candidate}" ] && [ -f "${candidate}/scripts/common.sh" ]; then
+            echo "${candidate}"; return 0
+        fi
+    done
+    return 1
+}
+INSTRUCTPRO2_ROOT="$(ip2_locate_root)" || {
+    echo "ERROR: could not locate the InstructPro2 repository." >&2
+    echo "       Submit from the repo root, or export INSTRUCTPRO2_ROOT." >&2
+    exit 1
+}
+export INSTRUCTPRO2_ROOT
+# shellcheck source=scripts/common.sh
+source "${INSTRUCTPRO2_ROOT}/scripts/common.sh"
 
-DATA_PATH="${DATA_PATH:-${WORK_ROOT}/data/ligand}"
-MODEL_ROOT="${MODEL_ROOT:-${WORK_ROOT}/model}"
-PRETRAIN_MODEL_PATH="${PRETRAIN_MODEL_PATH:-${MODEL_ROOT}/progen2}"
+DATA_PATH="${DATA_PATH:-${DATA_ROOT}/ligand}"
 
 # Stage 1 checkpoint to finetune from, and where Stage 2 checkpoints are written.
 STAGE1_CHECKPOINT="${STAGE1_CHECKPOINT:?set STAGE1_CHECKPOINT to the Stage 1 checkpoint (.pt)}"
 OUTPUT_PATH="${OUTPUT_PATH:-${MODEL_ROOT}/stage2_ligand}"
 
-CONDA_SH="${CONDA_SH:-${HOME}/anaconda3/etc/profile.d/conda.sh}"
-TRAIN_ENV="${TRAIN_ENV:-InstructPro2_Stage2}"
+TRAIN_ENV="${TRAIN_ENV:-InstructPro2}"
 
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 export MASTER_ADDR="${MASTER_ADDR:-localhost}"
@@ -34,8 +48,7 @@ if [ -n "${WANDB_PROJECT}" ]; then
     WANDB_ARGS=(--wandb-project "${WANDB_PROJECT}")
 fi
 
-# shellcheck disable=SC1090
-[ -f "${CONDA_SH}" ] && source "${CONDA_SH}" && conda activate "${TRAIN_ENV}"
+ip2_activate "${TRAIN_ENV}"
 
 mkdir -p "${OUTPUT_PATH}"
 

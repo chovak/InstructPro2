@@ -12,3 +12,13 @@ dist/
 *_logs/
 wandb/
 slurm-*.out
+
+# SLURM job logs written by the pipeline scripts
+logs/
+
+# Build artifacts from setup.sh (python setup.py build_ext --inplace)
+build/
+*.egg-info/
+*.so
+__pycache__/
+*.py[cod]

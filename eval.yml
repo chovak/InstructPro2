@@ -1,0 +1,44 @@
+# Evaluation environment for InstructPro2.
+#
+# Only needed to fold designs with ESMFold and to score them against
+# ground-truth structures with PyMOL. Generating sequences needs the main
+# `InstructPro2` environment instead (instructpro2.yml); the two are kept
+# apart because PyMOL and a current PyTorch pull in a dependency stack that
+# conflicts with the pinned one the model runs under.
+#
+#   conda env create -f eval.yml
+#   conda activate instructpro2-eval
+#
+# Used by: fold.sh, score.sh, eval/fold_designs.py,
+#          eval/score_structures.py, eval/get_infill_metrics.py
+#
+# Nothing here is needed if you only want sequences, or if you fold your own
+# designs and read confidence with score.sh PLDDT_ONLY=1, which reads pLDDT
+# straight out of the PDB and uses neither PyMOL nor ESMFold.
+name: instructpro2-eval
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  # Structural superposition for the RMSD metrics (score_structures.py).
+  - pymol-open-source=3.1
+  # Pairwise alignment for HCDR recovery (get_infill_metrics.py).
+  - biopython>=1.80
+  - pandas>=2.0
+  - numpy>=1.24
+  - matplotlib-base>=3.7
+  - scipy>=1.10
+  - pip
+  - pip:
+      # ESMFold ships inside transformers as EsmForProteinFolding; 4.41 is
+      # the version both environments are pinned to, which keeps the
+      # tokenizer behaviour identical across generation and folding.
+      - transformers==4.41.0
+      - accelerate>=0.26
+      - tqdm>=4.64
+      # Install the torch build that matches your CUDA. The default wheel
+      # works on most clusters; for a specific CUDA, install torch
+      # separately first, e.g.
+      #   pip install torch --index-url https://download.pytorch.org/whl/cu121
+      - torch>=2.1

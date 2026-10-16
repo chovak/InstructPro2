@@ -10,7 +10,6 @@ import sys
 import time
 from argparse import Namespace
 from itertools import chain
-import numpy as np
 
 import torch
 from fairseq import checkpoint_utils, distributed_utils, options, utils
@@ -18,7 +17,6 @@ from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.logging import metrics, progress_bar
 from fairseq.utils import reset_logging
 from omegaconf import DictConfig
-import generate_pdb_file
 
 
 logging.basicConfig(
@@ -121,25 +119,11 @@ def main(cfg: DictConfig, override_args=None):
         )
 
         log_outputs = []
-        rmsds = []
 
         fw_target = open(os.path.join(cfg.common_eval.results_path, "target.txt"), "w")
         fw_design = open(os.path.join(cfg.common_eval.results_path, "design.txt"), "w")
 
-        # for i, sample in enumerate(progress):
-
-        #     sample = utils.move_to_cuda(sample) if use_cuda else sample
-        #     _loss, _sample_size, log_output, _strings, _srcs = task.valid_step(sample, model, criterion)
-
-        #     progress.log(log_output, step=i)
-        #     log_outputs.append(log_output)
-
-        #     for idx, seq in enumerate(_strings):
-        #         fw_target.write(_srcs[idx] + "\n")
-        #         fw_design.write(seq + "\n")
-                
-        #     fw_target.flush()
-        #     fw_design.flush()
+        i = -1
         for i, sample in enumerate(progress):
 
             sample = utils.move_to_cuda(sample) if use_cuda else sample
@@ -178,9 +162,9 @@ def main(cfg: DictConfig, override_args=None):
             task.reduce_metrics(log_outputs, criterion)
             log_output = agg.get_smoothed_values()
 
-        print("inference time: {}".format(time.time()-start))
-        progress.print(log_output, tag=subset, step=i)
-        print("coordinate loss: {}".format(np.mean(rmsds)))
+        print("inference time: {:.1f}s".format(time.time() - start))
+        if i >= 0:
+            progress.print(log_output, tag=subset, step=i)
 
 
 def cli_main():
