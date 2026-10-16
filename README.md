@@ -5,11 +5,11 @@
 ### Natural Language and Biological Grounding<br/>Guided De Novo Protein Design
 
 <p>
-<a href="https://arxiv.org/abs/2610.19592"><img src="https://img.shields.io/badge/-arXiv-B31B1B?style=flat-square" alt="arXiv"/></a>
-<a href="https://huggingface.co/charlesnovak/InstructPro2"><img src="https://img.shields.io/badge/-Model-FFD21E?style=flat-square" alt="Model"/></a>
-<a href="https://huggingface.co/datasets/charlesnovak/InstructPro2Bench"><img src="https://img.shields.io/badge/-Dataset-FFD21E?style=flat-square" alt="Dataset"/></a>
-<img src="https://img.shields.io/badge/-Python%203.9-3776AB?style=flat-square" alt="python"/>
-<img src="https://img.shields.io/badge/-MIT%20License-3DA639?style=flat-square" alt="license"/>
+<a href="https://arxiv.org/abs/2610.19592"><img src="https://img.shields.io/badge/arXiv-2610.19592-B31B1B?style=flat-square&logo=arxiv&logoColor=white" alt="arXiv"/></a>
+<a href="https://huggingface.co/charlesnovak/InstructPro2"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Models-InstructPro2-FFD21E?style=flat-square" alt="Model"/></a>
+<a href="https://huggingface.co/datasets/charlesnovak/InstructPro2Bench"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-InstructPro2Bench-FFD21E?style=flat-square" alt="Dataset"/></a>
+<img src="https://img.shields.io/badge/Python-3.9-3776AB?style=flat-square&logo=python&logoColor=white" alt="python"/>
+<img src="https://img.shields.io/badge/License-MIT-3DA639?style=flat-square" alt="license"/>
 </p>
 
 <img src="assets/architecture.png" alt="InstructPro2 architecture" width="640"/>
@@ -31,11 +31,11 @@ ProGen2-large-BFD90 generates the sequence.
 ## ⚒️ Installation
 
 ```bash
-git clone https://github.com/chovak/InstructPro2.git
+git clone [https://github.com/chovak/InstructPro2.git](https://github.com/chovak/InstructPro2.git)
 cd InstructPro2
 
 conda env create -f protein.yml    # creates the `InstructPro2` environment
-conda activate protein_text
+conda activate InstructPro2
 bash setup.sh                      # builds the Cython extensions, installs the package
 ```
 
@@ -45,7 +45,7 @@ The evaluation pipeline additionally needs `pymol`, `biopython`, and a
 ## 💿 Weights and Data
 
 Weights and datasets are hosted on the Hugging Face Hub. `WORK_ROOT` is the
-root for data, models and output, and every script reads it; set it once and
+root for data, models, and output, and every script reads it; set it once and
 the defaults follow.
 
 ```bash
@@ -55,9 +55,14 @@ huggingface-cli download charlesnovak/InstructPro2 --local-dir $WORK_ROOT/model
 huggingface-cli download charlesnovak/InstructPro2Bench --repo-type dataset --local-dir $WORK_ROOT/data
 ```
 
-This gives `$WORK_ROOT/data/stage1`, `$WORK_ROOT/data/ligand` and
-`$WORK_ROOT/data/antibody`, which is where the scripts look by default. Each
-directory holds the splits the scripts name with `--valid-subset`:
+Downloading `charlesnovak/InstructPro2` populates `$WORK_ROOT/model` with the
+Stage 1 and Stage 2 checkpoints (`instructpro2_*.pt`) along with
+`progen2/progen2-large-BFD90/` for decoder initialization.
+
+Downloading `charlesnovak/InstructPro2Bench` gives `$WORK_ROOT/data/stage1`,
+`$WORK_ROOT/data/ligand`, and `$WORK_ROOT/data/antibody`, which is where the
+scripts look by default. Each directory holds the splits the scripts name with
+`--valid-subset`:
 
 | Stage | Directory | Splits |
 |---|---|---|
@@ -82,10 +87,10 @@ what you need rather than editing the files.
 
 ### Step 1: Stage 1 pretraining
 
-To pretrain the model on the Stage 1 dataset, use `train_stage1.sh`.
+To pretrain the model on the Stage 1 dataset, use `train_stage1.sh`:
 
 ```bash
-sbatch train_stage1.sh
+sbatch train_stage1.sh    # or: bash train_stage1.sh
 ```
 
 Generate and inspect Stage 1 designs:
@@ -99,8 +104,8 @@ MODEL_CHECKPOINT=$WORK_ROOT/model/instructpro2_stage1.pt bash validate_stage1.sh
 Both start from a Stage 1 checkpoint:
 
 ```bash
-STAGE1_CHECKPOINT=/path/to/instructpro2_stage1.pt bash train_stage2_ligand.sh
-STAGE1_CHECKPOINT=/path/to/instructpro2_stage1.pt bash train_stage2_antibody.sh
+STAGE1_CHECKPOINT=$WORK_ROOT/model/instructpro2_stage1.pt bash train_stage2_ligand.sh
+STAGE1_CHECKPOINT=$WORK_ROOT/model/instructpro2_stage1.pt bash train_stage2_antibody.sh
 ```
 
 ### Step 3: Evaluation
@@ -109,8 +114,8 @@ Each pipeline generates sequences, folds them with ESMFold, and scores them
 against ground-truth structures:
 
 ```bash
-MODEL_CHECKPOINT=/path/to/instructpro2_stage2_ligand.pt   bash eval_ligand.sh
-MODEL_CHECKPOINT=/path/to/instructpro2_stage2_antibody.pt bash eval_antibody.sh
+MODEL_CHECKPOINT=$WORK_ROOT/model/instructpro2_stage2_ligand.pt   bash eval_ligand.sh
+MODEL_CHECKPOINT=$WORK_ROOT/model/instructpro2_stage2_antibody.pt bash eval_antibody.sh
 ```
 
 > [!TIP]
@@ -159,7 +164,7 @@ If you find InstructPro2 useful in your research, please cite our work:
 
 ## 🪪 License
 
-This project is licensed under the terms specified in the LICENSE file.
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
 
 ## 💫 Contributions
 
